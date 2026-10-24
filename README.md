@@ -22,7 +22,7 @@ De snapshot in `data/budget.json` is op 24 oktober 2026 rechtstreeks opgehaald b
 | 2026 ontwerpbegroting | 2797 | 30 | € 555,614 miljard |
 | 2027 ontwerpbegroting | 2712 | 29 | € 573,976 miljard |
 
-Deze sommen tellen de laagste beschikbare uitgavenregels op; ze zijn geen geverifieerd totaal van alle overheidsuitgaven. De cirkel gebruikt positieve bronbedragen voor oppervlaktes. Negatieve correcties tellen wel mee in het getoonde nettobedrag; nulregels blijven navigeerbaar in de lijst. Een vlak kan daardoor iets groter lijken dan het nettobedrag suggereert.
+Deze sommen tellen de laagste beschikbare uitgavenregels op; ze zijn geen geverifieerd totaal van alle overheidsuitgaven. De cirkel gebruikt positieve bronbedragen voor oppervlaktes en percentages. Negatieve correcties tellen wel mee in het getoonde nettobedrag; nulregels blijven navigeerbaar in de lijst. Een vlak kan daardoor iets groter lijken dan het nettobedrag suggereert.
 
 Voor 2026 is ook een [voorlopige realisatie tot en met augustus](https://www.rijksfinancien.nl/uitgavenrealisaties) gepubliceerd: € 244,472 miljard aan begrotingsgefinancierde uitgaven. Deze stand wordt maandelijks bijgewerkt en sluit premiegefinancierde uitgaven uit. Daarom wordt hij niet in de cirkel opgeteld bij of vergeleken met de septemberbegroting inclusief premies. Voor 2027 is nog geen realisatie beschikbaar.
 
@@ -40,4 +40,4 @@ Start vanuit de repo-root:
 python3 -m http.server 8765 --bind 127.0.0.1
 ```
 
-Open `http://127.0.0.1:8765/`. De pagina heeft geen externe JavaScript- of CSS-afhankelijkheden. Ververs de snapshot met `python3 build_data.py`. Bij nieuwe begrotingsfasen of jaren moeten de bronbestanden en zichtbare keuzemogelijkheden worden toegevoegd en de dekking opnieuw worden gecontroleerd.
+Open `http://127.0.0.1:8765/`. De pagina heeft geen externe JavaScript- of CSS-afhankelijkheden. Ververs de datasnapshot met `python3 build_data.py`; de afzonderlijke 2025-kerncijfers, toelichting en beschikbare jaar- en faseknoppen in de HTML blijven daarbij handmatig beheerd. Bij nieuwe begrotingsfasen of jaren moeten de bronbestanden en zichtbare keuzemogelijkheden worden toegevoegd en de dekking opnieuw worden gecontroleerd.
