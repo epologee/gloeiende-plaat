@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>De gloeiende plaat: Rijksuitgaven</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="masthead">
+    <div class="brand"><span class="brand-mark" aria-hidden="true"></span>DE GLOEIENDE PLAAT</div>
+    <a href="https://www.rijksfinancien.nl/overzicht-datasets" target="_blank" rel="noopener">Bron: Rijksfinanciën ↗</a>
+  </header>
+  <main>
+    <section class="intro">
+      <p class="eyebrow" id="intro-period">NEDERLAND · RIJKSBEGROTING · 2026</p>
+      <h1>Waar gaat het geld naartoe?</h1>
+      <p>Verken de uitgaven van hoofdstuk tot regeling. Elke ring brengt je een niveau dieper; elk vlak staat voor een deel van de uitgaven.</p>
+    </section>
+    <section class="workspace" aria-label="Visualisatie van rijksuitgaven">
+      <div class="main-pane">
+        <div class="toolbar">
+          <div class="toolbar-controls">
+            <div class="year-switch" role="group" aria-label="Begrotingsjaar">
+              <button type="button" data-year="2025" aria-pressed="false">2025</button>
+              <button type="button" data-year="2026" class="active" aria-pressed="true">2026</button>
+              <button type="button" data-year="2027" aria-pressed="false">2027</button>
+            </div>
+            <div class="phase-switch" role="group" aria-label="Begrotingsfase">
+              <button type="button" data-phase="JV" aria-pressed="false">Gerealiseerd <span>jaarverslag</span></button>
+              <button type="button" data-phase="SBS" class="active" aria-pressed="true">Bijgesteld <span>september</span></button>
+              <button type="button" data-phase="OWB" aria-pressed="false">Begroot <span>ontwerp</span></button>
+            </div>
+          </div>
+          <span class="unit">Bedragen in euro · grafiek afgerond</span>
+        </div>
+        <p id="year-status" class="year-status"></p>
+        <nav id="breadcrumbs" class="breadcrumbs" aria-label="Pad in begroting"></nav>
+        <div class="chart-wrap">
+          <svg id="chart" viewBox="0 0 820 820" role="group" aria-label="Cirkelvormige hiërarchie van de rijksuitgaven"></svg>
+          <button id="chart-center" class="chart-center" type="button" disabled></button>
+          <div id="tooltip" class="tooltip" hidden></div>
+        </div>
+        <div class="chart-foot"><span><i></i>Klik op een segment om verder te kijken</span><span id="phase-meta"></span></div>
+      </div>
+      <aside class="detail-pane" aria-label="Details van selectie">
+        <div class="detail-heading"><p class="eyebrow" id="depth-label">ALLE UITGAVEN</p><h2 id="selection-name">Rijksuitgaven</h2><p id="selection-context"></p></div>
+        <div class="big-number" id="selection-value">...</div>
+        <div class="measure-label" id="measure-label">Septemberstand 2026</div>
+        <div class="divider"></div>
+        <div class="detail-summary"><span id="child-count"></span><span id="share-value"></span></div>
+        <div id="children" class="children"></div>
+        <div class="source-note"><strong>Over deze cijfers</strong><p id="coverage-note"></p><a id="phase-source" target="_blank" rel="noopener">Bekijk de bronregels ↗</a></div>
+      </aside>
+    </section>
+    <section class="reference" aria-labelledby="reference-title">
+      <div class="reference-copy">
+        <p class="eyebrow">OFFICIËLE VERGELIJKING · 2025</p>
+        <h2 id="reference-title">Begroot en gerealiseerd, met dezelfde definitie</h2>
+        <p>Het Financieel Jaarverslag vergelijkt uitgaven en inkomsten elk op een vaste grondslag. Deze kerncijfers zijn anders afgebakend dan de opgetelde uitgavenregels in de cirkel. Ze vormen samen ook geen directe berekening van het begrotingstekort.</p>
+        <a href="https://www.rijksfinancien.nl/financieel-jaarverslag/2025" target="_blank" rel="noopener">Financieel Jaarverslag van het Rijk 2025 ↗</a>
+      </div>
+      <div class="reference-figures">
+        <div class="figure-group"><h3>Netto-uitgaven binnen het uitgavenkader</h3><div class="figure-line"><span>Begroot</span><strong>€ 427,0 mld</strong><i style="--width:100%"></i></div><div class="figure-line"><span>Gerealiseerd</span><strong>€ 424,2 mld</strong><i style="--width:99.3%"></i></div><p>€ 2,8 mld lager dan begroot</p></div>
+        <div class="figure-group"><h3>Belastingen en sociale premies</h3><div class="figure-line"><span>Begroot</span><strong>€ 425,1 mld</strong><i style="--width:98.3%"></i></div><div class="figure-line"><span>Gerealiseerd</span><strong>€ 432,5 mld</strong><i style="--width:100%"></i></div><p>€ 7,5 mld hoger dan begroot</p></div>
+      </div>
+    </section>
+    <section class="method"><h2>Wat zie je hier?</h2><p>Dit experiment toont alleen <strong>uitgaven</strong> uit de budgettaire tabellen van het Ministerie van Financiën. De vijf bronlagen zijn hoofdstuk, artikel, artikelonderdeel, financieel instrument en detail of regeling. De oppervlaktes volgen positieve bedragen op het laagst gepubliceerde niveau. Negatieve correcties en nulregels tellen mee in het getoonde nettobedrag, maar hebben geen eigen oppervlak.</p><p><strong>Let op bij fasewissels:</strong> de dekking en indeling kunnen veranderen. Zo bevat de ontwerpbegroting 2025 premiegefinancierde zorgposten die in het jaarverslag veel kleiner of anders ingedeeld terugkomen. De twee totalen zijn niet zonder meer een zuivere raming versus realisatievergelijking. De tussentijdse realisatie over 2026 is begrotingsgefinancierd en sluit premies uit; die staat daarom niet als extra ring in de cirkel.</p></section>
+  </main>
+  <footer>Onafhankelijk experiment · Brongegevens: Ministerie van Financiën (CC0)</footer>
+</body>
+</html>
