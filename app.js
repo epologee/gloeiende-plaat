@@ -1,4 +1,4 @@
-const LEVELS = ['Rijksuitgaven', 'Hoofdstuk', 'Artikel', 'Artikelonderdeel', 'Financieel instrument', 'Detail of regeling'];
+const LEVELS = ['Bronregels', 'Hoofdstuk', 'Artikel', 'Artikelonderdeel', 'Financieel instrument', 'Detail of regeling'];
 const CHAPTER_COLORS = {
   A: 76, B: 255, C: 245, F: 150, H: 215,
   I: 295, IIA: 280, IIB: 275, III: 260, IV: 225,
@@ -32,7 +32,7 @@ function node(name, code, depth, parent) {
 }
 
 function buildTree(records) {
-  const root = node('Rijksuitgaven', '', 0, null);
+  const root = node('Uitgaven in de bron', '', 0, null);
   for (const record of records) {
     let current = root;
     for (let depth = 1; depth <= 5; depth++) {
@@ -88,7 +88,7 @@ function showTooltip(event, current) {
   const value = document.createElement('span');
   value.textContent = formatAmount(current.net);
   const label = document.createElement('span');
-  label.textContent = `${LEVELS[current.depth]} · ${percent.format(current.area / focus.area || 0)} van deze weergave`;
+  label.textContent = `${LEVELS[current.depth]} · ${percent.format(current.area / focus.area || 0)} van de positieve bedragen in deze weergave`;
   tooltip.append(title, value, label);
   const bounds = wrap.getBoundingClientRect();
   tooltip.style.left = `${Math.min(event.clientX - bounds.left + 16, bounds.width - 260)}px`;
@@ -108,7 +108,7 @@ function addSector(current, start, end, ring) {
   element.setAttribute('tabindex', '0');
   element.setAttribute('aria-label', `${LEVELS[current.depth]} ${current.name}, ${formatAmount(current.net)}`);
   element.addEventListener('click', () => select(current));
-  element.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); select(current); } });
+  element.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); select(current, true); } });
   element.addEventListener('pointermove', event => showTooltip(event, current));
   element.addEventListener('pointerleave', () => { tooltip.hidden = true; });
   svg.append(element);
@@ -155,20 +155,21 @@ function renderBreadcrumbs() {
   ancestors.forEach((current, index) => {
     if (index) { const sep = document.createElement('span'); sep.className = 'sep'; sep.textContent = '/'; nav.append(sep); }
     const button = document.createElement('button');
-    button.type = 'button'; button.textContent = current.depth === 0 ? 'Alle uitgaven' : current.name;
-    button.addEventListener('click', () => select(current)); nav.append(button);
+    button.type = 'button'; button.textContent = current.depth === 0 ? 'Alle bronregels' : current.name;
+    button.addEventListener('click', event => select(current, event.detail === 0)); nav.append(button);
   });
 }
 
 function renderDetail() {
   setText('#depth-label', LEVELS[focus.depth].toUpperCase());
   setText('#selection-name', focus.name);
-  setText('#selection-context', focus.depth ? `${focus.code ? focus.code + ' · ' : ''}${focus.parent.name}` : 'Alle hoofdstukken van de rijksbegroting');
+  setText('#selection-context', focus.depth ? `${focus.code ? focus.code + ' · ' : ''}${focus.parent.name}` : 'Som van beschikbare bronregels, geen officieel uitgaventotaal');
   setText('#selection-value', formatAmount(focus.net));
-  setText('#measure-label', phase === 'JV' ? `Gerealiseerd in ${year}` : phase === 'SBS' ? `Septemberstand ${year}` : `Ontwerpbegroting voor ${year}`);
+  const measure = phase === 'JV' ? `Gerealiseerd in ${year}` : phase === 'SBS' ? `Septemberstand ${year}` : `Ontwerpbegroting voor ${year}`;
+  setText('#measure-label', focus.depth ? measure : `${measure} · som bronregels`);
   const children = childrenOf(focus);
   setText('#child-count', children.length ? `${children.length} onderdelen` : 'Laagste bronregel');
-  setText('#share-value', focus.depth ? `${percent.format(focus.area / roots[currentKey()].area)} van het totaal` : '100% van het totaal');
+  setText('#share-value', `${percent.format(focus.area / roots[currentKey()].area)} van positieve bedragen`);
   const list = document.querySelector('#children'); list.replaceChildren();
   for (const child of children) {
     const button = document.createElement('button'); button.type = 'button'; button.className = 'child-row';
@@ -181,7 +182,7 @@ function renderDetail() {
     const fill = document.createElement('span'); fill.style.width = `${focus.area ? Math.max(0, Math.min(100, child.area / focus.area * 100)) : 0}%`; fill.style.background = colorFor(child, 1); track.append(fill);
     title.append(name, sub, track);
     const amount = document.createElement('span'); amount.className = 'child-amount'; amount.textContent = formatAmount(child.net);
-    button.append(title, amount); button.addEventListener('click', () => select(child)); list.append(button);
+    button.append(title, amount); button.addEventListener('click', event => select(child, event.detail === 0)); list.append(button);
   }
   const meta = dataset.years[year][phase].metadata;
   setText('#phase-meta', `${meta.rows} bronregels · ${meta.chapters} hoofdstukken`);
@@ -191,10 +192,11 @@ function renderDetail() {
   document.querySelector('#phase-source').href = meta.url;
 }
 
-function select(current) {
+function select(current, restoreFocus = false) {
   focus = current;
   tooltip.hidden = true;
   renderBreadcrumbs(); renderChart(); renderDetail();
+  if (restoreFocus) document.querySelector('#selection-name').focus();
 }
 
 function setPhase(next) {
@@ -239,8 +241,8 @@ function setYear(next) {
 
 document.querySelectorAll('[data-phase]').forEach(button => button.addEventListener('click', () => setPhase(button.dataset.phase)));
 document.querySelectorAll('[data-year]').forEach(button => button.addEventListener('click', () => setYear(button.dataset.year)));
-document.querySelector('#chart-center').addEventListener('click', () => {
-  if (focus?.parent) select(focus.parent);
+document.querySelector('#chart-center').addEventListener('click', event => {
+  if (focus?.parent) select(focus.parent, event.detail === 0 && !focus.parent.parent);
 });
 fetch('data/budget.json').then(response => {
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
